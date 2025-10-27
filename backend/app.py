@@ -1,18 +1,12 @@
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 import random
 from flask_swagger_ui import get_swaggerui_blueprint
-import os
 
-# Initialize Flask app
-app = Flask(__name__, static_folder='static')
-
-# Enable CORS for all routes (critical for frontend)
+app = Flask(__name__)
 CORS(app)
 
-# -------------------------------------------------
-# Quote Database (Mock Data)
-# -------------------------------------------------
+# Quote Database
 QUOTES = [
     {"content": "Code is like humor. When you have to explain it, it's bad.", "author": "Cory House", "tags": ["programming"]},
     {"content": "First, solve the problem. Then, write the code.", "author": "John Johnson", "tags": ["programming"]},
@@ -21,65 +15,66 @@ QUOTES = [
     {"content": "Make it work, make it right, make it fast.", "author": "Kent Beck", "tags": ["programming"]},
 ]
 
-# -------------------------------------------------
-# Swagger UI Setup
-# -------------------------------------------------
-SWAGGER_URL = '/docs'  # URL for Swagger UI
-API_URL = '/static/openapi.yaml'  # Path to OpenAPI spec
+# Embedded OpenAPI YAML (no file needed!)
+OPENAPI_YAML = """
+openapi: 3.0.3
+info:
+  title: Quote API
+  version: 1.0.0
+  description: Random programming & tech quotes
+servers:
+  - url: https://quote-api.onrender.com
+paths:
+  /random:
+    get:
+      summary: Get random quote
+      parameters:
+        - name: tag
+          in: query
+          schema: {type: string}
+      responses:
+        '200': {description: Quote}
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200': {description: OK}
+"""
 
+# Swagger UI Setup (uses embedded YAML)
+SWAGGER_URL = '/docs'
+API_URL = '/openapi.yaml'
 swaggerui_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,
     API_URL,
-    config={'app_name': "Quote API - Random Quotes Generator"}
+    config={'app_name': "Quote API"}
 )
+app.register_blueprint(swaggerui_blueprint)
 
-app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+# Serve embedded YAML
+@app.route('/openapi.yaml')
+def serve_openapi():
+    return Response(OPENAPI_YAML, mimetype='text/yaml')
 
-# Serve OpenAPI spec from static folder
-@app.route('/static/<path:filename>')
-def static_files(filename):
-    return send_from_directory(app.static_folder, filename)
-
-# -------------------------------------------------
-# API Routes
-# -------------------------------------------------
-
+# Routes
 @app.route("/")
 def home():
     return jsonify({
-        "message": "Quote API is Live!",
-        "endpoints": {
-            "GET /random": "Get random quote (?tag=programming)",
-            "GET /docs": "Interactive Swagger UI",
-            "GET /health": "Health check"
-        },
-        "swagger_ui": f"{request.url_root[:-1]}{SWAGGER_URL}"
+        "message": "Quote API Live!",
+        "endpoints": ["/random", "/docs", "/health"]
     })
 
 @app.route("/random")
 def random_quote():
-    """Return a random quote with optional tag filtering."""
     tag = request.args.get("tag")
-    
-    # Filter quotes by tag (case-insensitive)
-    filtered = [
-        q for q in QUOTES
-        if not tag or any(tag.lower() in t.lower() for t in q["tags"])
-    ]
-    
+    filtered = [q for q in QUOTES if not tag or any(tag.lower() in t.lower() for t in q["tags"])]
     if not filtered:
-        return jsonify({"error": f"No quotes found for tag: '{tag}'"}), 404
-    
+        return jsonify({"error": "No quotes for tag"}), 404
     return jsonify(random.choice(filtered))
 
 @app.route("/health")
 def health():
-    """Health check endpoint for monitoring."""
-    return jsonify({"status": "ok", "service": "quote-api"}), 200
+    return jsonify({"status": "ok", "service": "quote-api"})
 
-# -------------------------------------------------
-# Run App
-# -------------------------------------------------
 if __name__ == "__main__":
-    # Only for local development
-    app.run(host="0.0.0.0", port=8000, debug=False)
+    app.run(host="0.0.0.0", port=8000)

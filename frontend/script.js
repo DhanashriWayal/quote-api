@@ -1,5 +1,6 @@
-// frontend/script.js
-const API_URL = "https://quote-api-5r6y.onrender.com"; // ← CHANGE THIS LATER
+// UPDATE THIS LINE WITH YOUR REAL BACKEND URL
+const API_URL = "https://quote-api-5r6y.onrender.com/random";
+
 const quoteEl = document.getElementById("quote");
 const authorEl = document.getElementById("author");
 const tagFilter = document.getElementById("tag-filter");
@@ -19,24 +20,27 @@ async function fetchQuote() {
     if (data.error) {
       quoteEl.textContent = data.error;
       authorEl.textContent = "";
-      statusEl.textContent = "";
+      statusEl.textContent = "Try another tag";
       return;
     }
 
+    // Safely display quote
     quoteEl.textContent = `"${data.content}"`;
     authorEl.textContent = `— ${data.author}`;
     statusEl.textContent = "";
+
   } catch (err) {
-    quoteEl.textContent = "Failed to load quote. Try again!";
+    console.error("Fetch error:", err);
+    quoteEl.textContent = "Failed to load quote";
     authorEl.textContent = "";
-    statusEl.textContent = "Check internet or API URL";
+    statusEl.textContent = "Check internet";
   }
 }
 
 function copyQuote() {
   const text = `${quoteEl.textContent} ${authorEl.textContent}`;
   navigator.clipboard.writeText(text).then(() => {
-    statusEl.textContent = "Copied to clipboard!";
+    statusEl.textContent = "Copied!";
     setTimeout(() => statusEl.textContent = "", 2000);
   });
 }
