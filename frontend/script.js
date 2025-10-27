@@ -1,5 +1,5 @@
 // frontend/script.js
-const API_URL = "https://quote-api.onrender.com/random"; // ← CHANGE THIS LATER
+const API_URL = "https://quote-api-5r6y.onrender.com"; // ← CHANGE THIS LATER
 const quoteEl = document.getElementById("quote");
 const authorEl = document.getElementById("author");
 const tagFilter = document.getElementById("tag-filter");
