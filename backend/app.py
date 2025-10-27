@@ -4,7 +4,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 import os
 
 app = Flask(__name__)
-
+CORS(app)
 # -------------------------------------------------
 # Built-in quote database (mock data)
 # -------------------------------------------------
