@@ -1,0 +1,25 @@
+openapi: 3.0.3
+info:
+  title: Quote API
+  version: 1.0.0
+  description: Random programming & tech quotes with tag filtering
+servers:
+  - url: http://localhost:8000
+    description: Local
+  - url: https://your-quote-api.onrender.com
+    description: Production
+paths:
+  /random:
+    get:
+      summary: Get random quote
+      parameters:
+        - name: tag
+          in: query
+          schema: {type: string}
+      responses:
+        '200': {description: Quote object}
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200': {description: OK}

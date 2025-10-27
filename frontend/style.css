@@ -1,0 +1,96 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+
+#quote-box {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  min-height: 120px;
+}
+
+#quote {
+  font-size: 1.3rem;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+#author {
+  font-weight: 600;
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+select, button {
+  padding: 0.7rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+select {
+  background: #fff;
+  color: #333;
+}
+
+button {
+  background: #fff;
+  color: #667eea;
+  font-weight: 600;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+#copy-quote {
+  background: #4ade80;
+  color: white;
+}
+
+#status {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}

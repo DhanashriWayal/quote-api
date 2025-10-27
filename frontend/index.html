@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quote Generator</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1>Quote of the Moment</h1>
+
+    <div id="quote-box">
+      <p id="quote">Click below to get a quote!</p>
+      <p id="author"></p>
+    </div>
+
+    <div class="controls">
+      <select id="tag-filter">
+        <option value="">All Quotes</option>
+        <option value="programming">Programming</option>
+        <option value="technology">Technology</option>
+      </select>
+      <button id="new-quote">New Quote</button>
+      <button id="copy-quote" title="Copy to clipboard">Copy</button>
+    </div>
+
+    <div id="status"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
