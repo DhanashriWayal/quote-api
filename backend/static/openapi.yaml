@@ -2,24 +2,40 @@ openapi: 3.0.3
 info:
   title: Quote API
   version: 1.0.0
-  description: Random programming & tech quotes with tag filtering
+  description: A simple API to get random programming & tech quotes with tag filtering.
 servers:
+  - url: https://quote-api.onrender.com
+    description: Production
   - url: http://localhost:8000
     description: Local
-  - url: https://your-quote-api.onrender.com
-    description: Production
 paths:
   /random:
     get:
-      summary: Get random quote
+      summary: Get a random quote
       parameters:
         - name: tag
           in: query
-          schema: {type: string}
+          description: Filter by tag (e.g., programming, technology)
+          required: false
+          schema:
+            type: string
+            enum: [programming, technology]
       responses:
-        '200': {description: Quote object}
+        '200':
+          description: A random quote
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content: { type: string }
+                  author: { type: string }
+                  tags: { type: array, items: { type: string } }
+        '404':
+          description: No quotes found for tag
   /health:
     get:
       summary: Health check
       responses:
-        '200': {description: OK}
+        '200':
+          description: Service is healthy

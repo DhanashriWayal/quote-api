@@ -1,12 +1,17 @@
 from flask import Flask, jsonify, request, send_from_directory
+from flask_cors import CORS
 import random
 from flask_swagger_ui import get_swaggerui_blueprint
 import os
 
-app = Flask(__name__)
+# Initialize Flask app
+app = Flask(__name__, static_folder='static')
+
+# Enable CORS for all routes (critical for frontend)
 CORS(app)
+
 # -------------------------------------------------
-# Built-in quote database (mock data)
+# Quote Database (Mock Data)
 # -------------------------------------------------
 QUOTES = [
     {"content": "Code is like humor. When you have to explain it, it's bad.", "author": "Cory House", "tags": ["programming"]},
@@ -17,23 +22,18 @@ QUOTES = [
 ]
 
 # -------------------------------------------------
-# Swagger UI Setup (Fixed!)
+# Swagger UI Setup
 # -------------------------------------------------
-SWAGGER_URL = '/docs'
-API_URL = '/static/openapi.yaml'  # Serve from static folder
+SWAGGER_URL = '/docs'  # URL for Swagger UI
+API_URL = '/static/openapi.yaml'  # Path to OpenAPI spec
 
-# Register Swagger blueprint
 swaggerui_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,
     API_URL,
-    config={
-        'app_name': "Quote API",
-        'url': API_URL,
-        'spec_url': API_URL,
-        'static_url_path': '/swagger-ui/static'
-    }
+    config={'app_name': "Quote API - Random Quotes Generator"}
 )
-app.register_blueprint(swaggerui_blueprint)
+
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 # Serve OpenAPI spec from static folder
 @app.route('/static/<path:filename>')
@@ -47,36 +47,39 @@ def static_files(filename):
 @app.route("/")
 def home():
     return jsonify({
-        "message": "Quote API Live!",
+        "message": "Quote API is Live!",
         "endpoints": {
-            "GET /random": "Random quote (?tag=programming)",
-            "GET /docs": "Swagger UI Documentation",
+            "GET /random": "Get random quote (?tag=programming)",
+            "GET /docs": "Interactive Swagger UI",
             "GET /health": "Health check"
-        }
+        },
+        "swagger_ui": f"{request.url_root[:-1]}{SWAGGER_URL}"
     })
 
 @app.route("/random")
 def random_quote():
-    """Get a random quote with optional tag filter."""
+    """Return a random quote with optional tag filtering."""
     tag = request.args.get("tag")
-    filtered_quotes = [
+    
+    # Filter quotes by tag (case-insensitive)
+    filtered = [
         q for q in QUOTES
-        if not tag or any(tag.lower() in str(t).lower() for t in q["tags"])
+        if not tag or any(tag.lower() in t.lower() for t in q["tags"])
     ]
     
-    if not filtered_quotes:
-        return jsonify({"error": f"No quotes found for tag: {tag}"}), 404
+    if not filtered:
+        return jsonify({"error": f"No quotes found for tag: '{tag}'"}), 404
     
-    quote = random.choice(filtered_quotes)
-    return jsonify(quote)
+    return jsonify(random.choice(filtered))
 
 @app.route("/health")
 def health():
-    """Health check endpoint."""
+    """Health check endpoint for monitoring."""
     return jsonify({"status": "ok", "service": "quote-api"}), 200
 
 # -------------------------------------------------
-# Run the app
+# Run App
 # -------------------------------------------------
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    # Only for local development
+    app.run(host="0.0.0.0", port=8000, debug=False)
