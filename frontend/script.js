@@ -1,4 +1,4 @@
-// UPDATE THIS LINE WITH YOUR REAL BACKEND URL
+// YOUR REAL BACKEND URL
 const API_URL = "https://quote-api-5r6y.onrender.com/random";
 
 const quoteEl = document.getElementById("quote");
@@ -24,13 +24,12 @@ async function fetchQuote() {
       return;
     }
 
-    // Safely display quote
     quoteEl.textContent = `"${data.content}"`;
     authorEl.textContent = `— ${data.author}`;
     statusEl.textContent = "";
 
   } catch (err) {
-    console.error("Fetch error:", err);
+    console.error("Error:", err);
     quoteEl.textContent = "Failed to load quote";
     authorEl.textContent = "";
     statusEl.textContent = "Check internet";
@@ -45,7 +44,7 @@ function copyQuote() {
   });
 }
 
-// Event Listeners
+// Events
 newQuoteBtn.addEventListener("click", fetchQuote);
 copyBtn.addEventListener("click", copyQuote);
 tagFilter.addEventListener("change", fetchQuote);
